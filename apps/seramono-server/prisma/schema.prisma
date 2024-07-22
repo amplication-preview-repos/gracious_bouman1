@@ -1,0 +1,130 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Student {
+  id          String       @id @default(cuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  lastName    String?
+  email       String?
+  dateOfBirth DateTime?
+  firstName   String?
+  attendances Attendance[]
+  registers   Register[]
+  enrollments Enrollment[]
+  parent      String?
+}
+
+model Teacher {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  lastName  String?
+  email     String?
+  hireDate  DateTime?
+  firstName String?
+}
+
+model Course {
+  id          String       @id @default(cuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  courseName  String?
+  courseCode  String?
+  description String?
+  classes     ClassModel[]
+  enrollments Enrollment[]
+  attendances Attendance[]
+  registers   Register[]
+}
+
+model Attendance {
+  id             String                @id @default(cuid())
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+  attendanceDate DateTime?
+  status         EnumAttendanceStatus?
+  student        Student?              @relation(fields: [studentId], references: [id])
+  studentId      String?
+  course         Course?               @relation(fields: [courseId], references: [id])
+  courseId       String?
+}
+
+model Enrollment {
+  id         String    @id @default(cuid())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  enrollDate DateTime?
+  course     Course?   @relation(fields: [courseId], references: [id])
+  courseId   String?
+  student    Student?  @relation(fields: [studentId], references: [id])
+  studentId  String?
+}
+
+model Register {
+  id           String              @id @default(cuid())
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  registerDate DateTime?
+  status       EnumRegisterStatus?
+  student      Student?            @relation(fields: [studentId], references: [id])
+  studentId    String?
+  course       Course?             @relation(fields: [courseId], references: [id])
+  courseId     String?
+}
+
+model ClassModel {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  classRoom String?
+  className String?
+  course    Course?  @relation(fields: [courseId], references: [id])
+  courseId  String?
+}
+
+model Staff {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  firstName String?
+  lastName  String?
+  position  String?
+  staffId   Int?
+  email     String?
+}
+
+model Parent {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  firstName String?
+  email     String?
+  lastName  String?
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  firstName String?
+  lastName  String?
+  username  String   @unique
+  email     String?  @unique
+  password  String
+  roles     Json
+}
+
+enum EnumAttendanceStatus {
+  Option1
+}
+
+enum EnumRegisterStatus {
+  Option1
+}
